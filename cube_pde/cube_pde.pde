@@ -2,10 +2,10 @@ float x,y;
 float rotAngle;
 PImage img1, img2;
 
-int [][] sharpenKernel = {
-  {0, -1, 0},
-  {-1, 5, -1},
-  {0, -1, 0}
+float [][] sharpenKernel = {
+  {1.0/9.0, 1.0/9.0, 1.0/9.0},
+  {1.0/9.0, 1.0/9.0, 1.0/9.0},
+  {1.0/9.0, 1.0/9.0, 1.0/9.0}
 };
 
 
@@ -28,13 +28,6 @@ color[][] getPixelMatrix(PImage image){
   return pixelMatrix;
 }
 
-void getNeighbours(int line, int col, int n){
-  
-}
-
-void convolute(PImage image, int[][] kernel){
-}
-
 void testGetPixelMatrix(PImage image){
   color [][] pixelMatrix = getPixelMatrix(image);
   int count = 0;
@@ -47,6 +40,62 @@ void testGetPixelMatrix(PImage image){
   }
 }
 
+boolean skipKernelPosition(int kPos, int iPos, int kHalf, int iDimension){
+   int offset = kPos - kHalf;
+   int pos = iPos + offset;
+   return (pos < 0 || pos >= iDimension);
+}
+
+
+float getPixelAtPosition(color [][] pixels, int iWidth, int iHeight, int line, int col, float[][] kernel){
+  
+  int kernelS = kernel.length;
+  
+  int half = kernelS / 2;
+  float result = 0;
+  
+  for(int i = 0 ; i < kernelS; i++){
+    int lineOffset = i - half;
+    boolean lineSkip = skipKernelPosition(i, line, half, iHeight);
+    if(lineSkip)
+      continue;
+    int imgLine = line + lineOffset;
+    for(int j = 0; j < kernelS; j++){
+      int colOffset = j - half;
+      boolean colSkip = skipKernelPosition(j, col, half, iWidth);
+      if(colSkip)
+        continue;
+      int imgCol = col + colOffset;
+      
+      float weight = kernel[i][j];
+      float value = red(pixels[imgLine][imgCol]); // Get any component, since image is in greyscale.
+      result += weight * value;
+    }
+    
+  }
+  
+  return result;
+}
+
+void applyFilter(PImage image, float[][] kernel){
+  
+  color[][] pixels = getPixelMatrix(image);
+  int count = 0;
+  
+  for(int i = 0; i < image.height; i++){
+    for(int j = 0; j < image.width; j++){
+      
+      float newValue = getPixelAtPosition(pixels, image.width, image.height, i, j, kernel);
+      image.pixels[count] = color(newValue);
+      count++;
+    }
+  }
+  
+  image.updatePixels();
+}
+
+
+
 void setup() {
   size(1024,768,P3D);
   x = 100;
@@ -54,8 +103,8 @@ void setup() {
   rotAngle = 0;
   img1 = loadImage("engine.png");
   img2 = loadImage("engine.png");
-  img2.filter(GRAY);
-  
+  //img2.filter(GRAY);
+  applyFilter(img2, sharpenKernel);
 }
 
 void draw() {
