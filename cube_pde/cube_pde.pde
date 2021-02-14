@@ -107,6 +107,8 @@ void applySobelFilter(PImage image){
     {0, 0, 0},
     {-1, -2, -1}
   };
+  img2.filter(GRAY);
+  //img2.filter(BLUR);
   
   color[][] pixels = getPixelMatrix(image);
   int count = 0;
@@ -133,7 +135,6 @@ void setup() {
   rotAngle = 0;
   img1 = loadImage("engine.png");
   img2 = loadImage("engine.png");
-  img2.filter(GRAY);
   applySobelFilter(img2);
 }
 
