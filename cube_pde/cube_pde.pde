@@ -94,6 +94,36 @@ void applyFilter(PImage image, float[][] kernel){
   image.updatePixels();
 }
 
+void applySobelFilter(PImage image){
+  
+  float[][] gx ={
+    {1, 0, -1},
+    {2, 0, -2},
+    {1, 0, -1}
+  };
+  
+  float[][] gy ={
+    {1, 2, 1},
+    {0, 0, 0},
+    {-1, -2, -1}
+  };
+  
+  color[][] pixels = getPixelMatrix(image);
+  int count = 0;
+  
+  for(int i = 0; i < image.height; i++){
+    for(int j = 0; j < image.width; j++){
+      
+      float xValue = getPixelAtPosition(pixels, image.width, image.height, i, j, gx);
+      float yValue = getPixelAtPosition(pixels, image.width, image.height, i, j, gy);
+      float newValue = sqrt(pow(xValue, 2) + pow(yValue, 2));
+      image.pixels[count] = color(newValue);
+      count++;
+    }
+  }
+  
+  image.updatePixels();
+}
 
 
 void setup() {
@@ -103,8 +133,8 @@ void setup() {
   rotAngle = 0;
   img1 = loadImage("engine.png");
   img2 = loadImage("engine.png");
-  //img2.filter(GRAY);
-  applyFilter(img2, sharpenKernel);
+  img2.filter(GRAY);
+  applySobelFilter(img2);
 }
 
 void draw() {
