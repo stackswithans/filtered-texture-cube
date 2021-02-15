@@ -195,7 +195,7 @@ void applyCannyOperator(PImage image){
 
     //Double-thresholding
     float maxThresh = 0.5;
-    float minThresh = 0.2;
+    float minThresh = 0.3;
 
     image.loadPixels();
     color [][] pixels = getPixelMatrix(image);
@@ -210,11 +210,11 @@ void applyCannyOperator(PImage image){
             }
             else if(intensity > maxThresh){
                 data.strength = 2;
+                image.pixels[count] = color(255);
             }
             else{
                 data.strength = 1;
             }
-                
             count++;
         }
     }
@@ -222,13 +222,15 @@ void applyCannyOperator(PImage image){
 
     //Applying Hysteresis
     image.loadPixels();
-    //pixels = getPixelMatrix(image);
+    pixels = getPixelMatrix(image);
     count = 0;
     for(int i = 0; i < image.height; i++){
         for(int j = 0; j < image.width; j++){
             PixelData data = gradientData[i][j];
-            if(data.strength != 1)
+            if(data.strength != 1){
+                count++;
                 continue;
+            }
             boolean connected = false;
             //Checking for connections to strong neighbours
             if(j > 0)
@@ -248,8 +250,10 @@ void applyCannyOperator(PImage image){
             if(j < image.width - 1 && i < image.height - 1)
                 connected = connected || (gradientData[i + 1][j + 1].strength == 2);
             if(!connected){
-                image.pixels[count] = color(255,0, 0);
+                image.pixels[count] = color(0);
             }
+            else
+                image.pixels[count] = color(255);
             count++;
         }
     }
