@@ -282,49 +282,52 @@ void setup() {
 
 void draw() {
   background(0);
+  /*
   image(img1, x - (img1.width / 2), 100);
   image(img2, x - (img1.width / 2), y + img1.height + 100);
-  image(img3, 1 , 100);
+  image(img3, 1 , 100);*/
+  drawCube(200);
 }
 
 
-void drawCube(){
-  translate(x, y);
+void drawCube(float cSize){
+  translate(width / 2, height / 2, -30);
+  //rotateZ(radians(rotAngle));
+  scale(cSize, cSize, 0);
   rotateX(radians(rotAngle));
   rotateY(radians(rotAngle));
-  //rotateZ(radians(rotAngle));
   fill(255);
   beginShape(QUADS);
-  vertex(-100, -100, 100);
-  vertex( 100, -100, 100);
-  vertex( 100,  100, 100);
-  vertex(-100,  100, 100);
+  vertex(-1, -1, 1);
+  vertex( 1, -1, 1);
+  vertex( 1,  1, 1);
+  vertex(-1,  1, 1);
   
-  vertex(-100, -100, -100);
-  vertex( 100, -100, -100);
-  vertex( 100,  100, -100);
-  vertex(-100,  100, -100);
+  vertex(-1, -1, -1);
+  vertex( 1, -1, -1);
+  vertex( 1,  1, -1);
+  vertex(-1,  1, -1);
   
-  vertex(-100, -100, 100);
-  vertex(-100, -100, -100);
-  vertex(-100, 100, -100);
-  vertex(-100, 100, 100);
+  vertex(-1, -1, 1);
+  vertex(-1, -1, -1);
+  vertex(-1, 1, -1);
+  vertex(-1, 1, 1);
   
-  vertex( 100,  -100, 100);
-  vertex( 100,  -100, -100);
-  vertex( 100,  100, -100);
-  vertex( 100,  100, 100);
+  vertex( 1,  -1, 1);
+  vertex( 1,  -1, -1);
+  vertex( 1,  1, -1);
+  vertex( 1,  1, 1);
   
-  vertex( -100,  -100, 100);
-  vertex( -100,  -100, -100);
-  vertex( 100,  -100, -100);
-  vertex( 100,  -100, 100);
+  vertex( -1,  -1, 1);
+  vertex( -1,  -1, -1);
+  vertex( 1,  -1, -1);
+  vertex( 1,  -1, 1);
   
-  vertex( -100,  100, 100);
-  vertex( -100,  100, -100);
-  vertex( 100,  100, -100);
-  vertex( 100,  100, 100);
+  vertex( -1,  1, 1);
+  vertex( -1,  1, -1);
+  vertex( 1,  1, -1);
+  vertex( 1,  1, 1);
   
-  endShape(CLOSE);
+  endShape();
   rotAngle++;  
 }
