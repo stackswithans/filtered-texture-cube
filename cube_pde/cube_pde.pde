@@ -281,24 +281,37 @@ void setup() {
   textureMode(NORMAL);
 }
 
+
+float xmag, ymag = 0;
+float newXmag, newYmag = 0; 
+
 void draw() {
   background(0);
   /*
   image(img1, x - (img1.width / 2), 100);
   image(img2, x - (img1.width / 2), y + img1.height + 100);
   image(img3, 1 , 100);*/
+  newXmag = mouseX/float(width) * TWO_PI;
+  newYmag = mouseY/float(height) * TWO_PI;
+  
+  float diff = xmag-newXmag;
+  if (abs(diff) >  0.01) { 
+    xmag -= diff/4.0; 
+  }
+  
+  diff = ymag-newYmag;
+  if (abs(diff) >  0.01) { 
+    ymag -= diff/4.0; 
+  }
+  
+  translate(width / 2, height / 2, -30);
+  rotateX(-ymag); 
+  rotateY(xmag);
   drawCube(150);
 }
 
 
 void drawCube(float cSize){
-  translate(width / 2, height / 2, -30);
-  //rotateZ(radians(rotAngle));
-  //scale(cSize, cSize, 0);
-  //rotateX(radians(rotAngle));
-  rotateY(radians(rotAngle));
-  fill(255);
-
 
   beginShape(QUADS);
   texture(img1);
