@@ -271,19 +271,20 @@ void setup() {
   y = 100;
   rotAngle = 0;
   img1 = loadImage("lizard.jpg");
-  img1.resize(500, 250);
+  img1.resize(450, 250);
   img2 = loadImage("lizard.jpg");
-  img2.resize(500, 250);
-  //img3 = loadImage("engine.png");
-  //applySobelFilter(img2, 0);
+  img2.resize(450, 250);
+  img3 = loadImage("lizard.jpg");
+  img3.resize(450, 250);
   applyCannyOperator(img2);
+  applySobelFilter(img3, 0);
 }
 
 void draw() {
   background(0);
   image(img1, x - (img1.width / 2), 100);
   image(img2, x - (img1.width / 2), y + img1.height + 100);
-  //image(img3, x  + (img3.width * 2) + 400 , y - (img3.height / 2));
+  image(img3, 1 , 100);
 }
 
 
