@@ -151,6 +151,7 @@ void applyCannyOperator(PImage image){
     
     PixelData[][] gradientData = applySobelFilter(image, 1);
 
+    //Non-maximum suppression
     image.loadPixels();
     int count = 0;
     for(int i = 0; i < image.height; i++){
@@ -192,26 +193,63 @@ void applyCannyOperator(PImage image){
     }
     image.updatePixels();
 
+    //Double-thresholding
     float maxThresh = 0.5;
-    float minThresh = 0.3;
-    color [][] pixels = getPixelMatrix(image);
+    float minThresh = 0.2;
 
     image.loadPixels();
+    color [][] pixels = getPixelMatrix(image);
     count = 0;
     for(int i = 0; i < image.height; i++){
         for(int j = 0; j < image.width; j++){
-            float intensity = red(pixels[i][j])/ 255;
+            PixelData data = gradientData[i][j];
+            float intensity = data.gradient / 255.0;
             if(intensity < minThresh){
                 image.pixels[count] = color(0);
-                gradientData[i][j].strength = 0;
+                data.strength = 0;
             }
             else if(intensity > maxThresh){
-                gradientData[i][j].strength = 2;
+                data.strength = 2;
             }
             else{
-                gradientData[i][j].strength = 1;
+                data.strength = 1;
             }
                 
+            count++;
+        }
+    }
+    image.updatePixels();
+
+    //Applying Hysteresis
+    image.loadPixels();
+    //pixels = getPixelMatrix(image);
+    count = 0;
+    for(int i = 0; i < image.height; i++){
+        for(int j = 0; j < image.width; j++){
+            PixelData data = gradientData[i][j];
+            if(data.strength != 1)
+                continue;
+            boolean connected = false;
+            //Checking for connections to strong neighbours
+            if(j > 0)
+                connected = connected || (gradientData[i][j - 1].strength == 2);
+            if(j < image.width - 1)
+                connected = connected || (gradientData[i][j + 1].strength == 2);
+            if(j < image.width - 1 && i > 0)
+                connected = connected || (gradientData[i - 1][j + 1].strength == 2);
+            if(j > 0 && i < image.height - 1)
+                connected = connected || (gradientData[i + 1][j - 1].strength == 2);
+            if(i > 0)
+                connected = connected || (gradientData[i - 1][j].strength == 2);
+            if(i < image.height - 1)
+                connected = connected || (gradientData[i + 1][j].strength == 2);
+            if(j > 0 && i > 0)
+                connected = connected || (gradientData[i - 1][j - 1].strength == 2);
+            if(j < image.width - 1 && i < image.height - 1)
+                connected = connected || (gradientData[i + 1][j + 1].strength == 2);
+            if(!connected){
+                image.pixels[count] = color(255,0, 0);
+            }
             count++;
         }
     }
