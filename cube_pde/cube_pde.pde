@@ -90,25 +90,6 @@ float getPixelAtPosition(color [][] pixels, int iWidth, int iHeight, int line, i
   return result;
 }
 
-void applyFilter(PImage image, float[][] kernel){
-  
-  color[][] pixels = getPixelMatrix(image);
-  int count = 0;
-  
-  for(int i = 0; i < image.height; i++){
-    for(int j = 0; j < image.width; j++){
-      
-      float newValue = getPixelAtPosition(pixels, image.width, image.height, i, j, kernel);
-      image.pixels[count] = color(newValue);
-      count++;
-    }
-  }
-  
-  image.updatePixels();
-}
-
-
-
 PixelData[][] applySobelFilter(PImage image, int blurLevel){
   
   float[][] gx ={
@@ -147,9 +128,9 @@ PixelData[][] applySobelFilter(PImage image, int blurLevel){
   return gradientData;
 }
 
-void applyCannyOperator(PImage image){
+void applyCannyOperator(PImage image, int blurLevel, float minThresh, float maxThresh){
     
-    PixelData[][] gradientData = applySobelFilter(image, 1);
+    PixelData[][] gradientData = applySobelFilter(image, blurLevel);
 
     //Non-maximum suppression
     image.loadPixels();
@@ -194,9 +175,6 @@ void applyCannyOperator(PImage image){
     image.updatePixels();
 
     //Double-thresholding
-    float maxThresh = 0.5;
-    float minThresh = 0.3;
-
     image.loadPixels();
     color [][] pixels = getPixelMatrix(image);
     count = 0;
@@ -262,7 +240,7 @@ void applyCannyOperator(PImage image){
 
 float x,y;
 float rotAngle;
-PImage img1, img2, img3;
+PImage img1, img2, img3, img4, img5, img6;
 
 
 void setup() {
@@ -270,14 +248,28 @@ void setup() {
   x = width/2;
   y = 100;
   rotAngle = 0;
+  //Foto original
   img1 = loadImage("lizard.jpg");
-  img1.resize(450, 250);
+
+  //Foto com sobel (sem blur)
   img2 = loadImage("lizard.jpg");
-  img2.resize(450, 250);
+  applySobelFilter(img2, 0);
+
+  //Foto com sobel (com blur 1)
   img3 = loadImage("lizard.jpg");
-  img3.resize(450, 250);
-  applyCannyOperator(img2);
-  applySobelFilter(img3, 0);
+  applySobelFilter(img3, 1);
+
+  //Foto com o canny(0.1 -- 0.3)
+  img4 = loadImage("lizard.jpg");
+  applyCannyOperator(img4, 1, 0.1, 0.3);
+
+  //Foto com o canny(0.2  -- 0.4)
+  img5 = loadImage("lizard.jpg");
+  applyCannyOperator(img5, 1, 0.2, 0.4);
+
+  //Foto com o canny(0.3  -- 0.5)
+  img6 = loadImage("lizard.jpg");
+  applyCannyOperator(img6, 1, 0.3, 0.5);
   textureMode(NORMAL);
 }
 
@@ -286,7 +278,7 @@ float xmag, ymag = 0;
 float newXmag, newYmag = 0; 
 
 void draw() {
-  background(0);
+  background(255);
   /*
   image(img1, x - (img1.width / 2), 100);
   image(img2, x - (img1.width / 2), y + img1.height + 100);
@@ -339,7 +331,7 @@ void drawCube(float cSize){
   
   beginShape(QUADS);
   fill(255, 255, 0);
-  //texture(img3);
+  texture(img4);
   vertex( cSize,  -cSize, cSize, 0, 0);
   vertex( cSize,  -cSize, -cSize, 1 ,0);
   vertex( cSize,  cSize, -cSize, 1, 1);
@@ -348,7 +340,7 @@ void drawCube(float cSize){
   
   beginShape(QUADS);
   fill(0, 0, 255);
-  //texture(img3);
+  texture(img5);
   vertex( -cSize,  -cSize, cSize, 0, 0);
   vertex( -cSize,  -cSize, -cSize, 1, 0);
   vertex( cSize,  -cSize, -cSize, 1, 1);
@@ -357,7 +349,7 @@ void drawCube(float cSize){
   
   beginShape(QUADS);
   fill(0, 255, 0);
-  //texture(img3);
+  texture(img6);
   vertex( -cSize,  cSize, cSize, 0, 0);
   vertex( -cSize,  cSize, -cSize, 1, 0);
   vertex( cSize,  cSize, -cSize, 1, 1);
