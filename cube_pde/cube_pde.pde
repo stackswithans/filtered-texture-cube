@@ -266,12 +266,14 @@ PImage img1, img2, img3;
 
 
 void setup() {
-  size(1024,768,P3D);
-  x = 100;
-  y = height/2;
+  size(1200,768,P3D);
+  x = width/2;
+  y = 100;
   rotAngle = 0;
-  img1 = loadImage("engine.png");
-  img2 = loadImage("engine.png");
+  img1 = loadImage("lizard.jpg");
+  img1.resize(500, 250);
+  img2 = loadImage("lizard.jpg");
+  img2.resize(500, 250);
   //img3 = loadImage("engine.png");
   //applySobelFilter(img2, 0);
   applyCannyOperator(img2);
@@ -279,8 +281,8 @@ void setup() {
 
 void draw() {
   background(0);
-  image(img1, x, y - (img1.height / 2));
-  image(img2, x + img2.width + 200 , y - (img2.height / 2));
+  image(img1, x - (img1.width / 2), 100);
+  image(img2, x - (img1.width / 2), y + img1.height + 100);
   //image(img3, x  + (img3.width * 2) + 400 , y - (img3.height / 2));
 }
 
