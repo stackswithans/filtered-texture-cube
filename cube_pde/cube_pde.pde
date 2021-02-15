@@ -2,12 +2,26 @@ float x,y;
 float rotAngle;
 PImage img1, img2;
 
-float [][] sharpenKernel = {
-  {1.0/9.0, 1.0/9.0, 1.0/9.0},
-  {1.0/9.0, 1.0/9.0, 1.0/9.0},
-  {1.0/9.0, 1.0/9.0, 1.0/9.0}
-};
+class PixelData{
+  
+  float gradient;
+  float direction;
+  
+  public PixelData(float gradient, float direction){
+    this.gradient = gradient;
 
+    if((direction >= 0 && direction <= 22.5) || (direction >= 157.5))
+        this.direction = 0;
+    else if(direction > 22.5 && direction <= 67.5)
+        this.direction = 45;
+    else if(direction > 67.5 && direction <= 112.5)
+        this.direction = 90;
+    else
+        this.direction = 135;
+  }
+  
+  
+}
 
 
 color[][] getPixelMatrix(PImage image){
@@ -94,7 +108,9 @@ void applyFilter(PImage image, float[][] kernel){
   image.updatePixels();
 }
 
-void applySobelFilter(PImage image){
+
+
+PixelData[][] applySobelFilter(PImage image, int blurLevel){
   
   float[][] gx ={
     {1, 0, -1},
@@ -108,8 +124,11 @@ void applySobelFilter(PImage image){
     {-1, -2, -1}
   };
   img2.filter(GRAY);
-  //img2.filter(BLUR);
-  
+  if(blurLevel > 0)
+    img2.filter(BLUR, blurLevel);
+    
+    
+  PixelData[][] gradientData = new PixelData[image.height][image.width];
   color[][] pixels = getPixelMatrix(image);
   int count = 0;
   
@@ -120,11 +139,17 @@ void applySobelFilter(PImage image){
       float yValue = getPixelAtPosition(pixels, image.width, image.height, i, j, gy);
       float newValue = sqrt(pow(xValue, 2) + pow(yValue, 2));
       image.pixels[count] = color(newValue);
+      float direction = abs(atan2(yValue, xValue));
+      gradientData[i][j] = new PixelData(newValue, degrees(direction));
       count++;
     }
   }
-  
   image.updatePixels();
+  return gradientData;
+}
+
+void applyCannyOperator(PImage image){
+  
 }
 
 
@@ -135,7 +160,7 @@ void setup() {
   rotAngle = 0;
   img1 = loadImage("engine.png");
   img2 = loadImage("engine.png");
-  applySobelFilter(img2);
+  applySobelFilter(img2, 0);
 }
 
 void draw() {
