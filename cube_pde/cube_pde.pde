@@ -1,14 +1,13 @@
-float x,y;
-float rotAngle;
-PImage img1, img2;
-
 class PixelData{
   
   float gradient;
   float direction;
+  int strength;
+
   
   public PixelData(float gradient, float direction){
     this.gradient = gradient;
+    this.strength = -1;
 
     if((direction >= 0 && direction <= 22.5) || (direction >= 157.5))
         this.direction = 0;
@@ -123,9 +122,9 @@ PixelData[][] applySobelFilter(PImage image, int blurLevel){
     {0, 0, 0},
     {-1, -2, -1}
   };
-  img2.filter(GRAY);
+  image.filter(GRAY);
   if(blurLevel > 0)
-    img2.filter(BLUR, blurLevel);
+    image.filter(BLUR, blurLevel);
     
     
   PixelData[][] gradientData = new PixelData[image.height][image.width];
@@ -149,8 +148,79 @@ PixelData[][] applySobelFilter(PImage image, int blurLevel){
 }
 
 void applyCannyOperator(PImage image){
-  
+    
+    PixelData[][] gradientData = applySobelFilter(image, 1);
+
+    image.loadPixels();
+    int count = 0;
+    for(int i = 0; i < image.height; i++){
+        for(int j = 0; j < image.width; j++){
+            PixelData data = gradientData[i][j];
+            float maxValue = data.gradient;
+            if(data.direction == 0){
+                if(j > 0)
+                    maxValue = max(maxValue, gradientData[i][j - 1].gradient);
+                if(j < image.width - 1)
+                    maxValue = max(maxValue, gradientData[i][j + 1].gradient);
+            }
+            else if(data.direction == 45){
+                if(j < image.width - 1 && i > 0)
+                    maxValue = max(maxValue, gradientData[i - 1][j + 1].gradient);
+                if(j > 0 && i < image.height - 1)
+                    maxValue = max(maxValue, gradientData[i + 1][j - 1].gradient);
+                
+            }
+            else if(data.direction == 90){
+                if(i > 0)
+                    maxValue = max(maxValue, gradientData[i - 1][j].gradient);
+                if(i < image.height - 1)
+                    maxValue = max(maxValue, gradientData[i + 1][j].gradient);
+                
+            }
+            else if(data.direction == 135){
+                if(j > 0 && i > 0)
+                    maxValue = max(maxValue, gradientData[i - 1][j - 1].gradient);
+                if(j < image.width - 1 && i < image.height - 1)
+                    maxValue = max(maxValue, gradientData[i + 1][j + 1].gradient);
+            }
+            if (maxValue != data.gradient){
+                image.pixels[count] = color(0); //Supress pixel
+                gradientData[i][j].gradient = 0;
+            }
+            count++;
+        }
+    }
+    image.updatePixels();
+
+    float maxThresh = 0.5;
+    float minThresh = 0.3;
+    color [][] pixels = getPixelMatrix(image);
+
+    image.loadPixels();
+    count = 0;
+    for(int i = 0; i < image.height; i++){
+        for(int j = 0; j < image.width; j++){
+            float intensity = red(pixels[i][j])/ 255;
+            if(intensity < minThresh){
+                image.pixels[count] = color(0);
+                gradientData[i][j].strength = 0;
+            }
+            else if(intensity > maxThresh){
+                gradientData[i][j].strength = 2;
+            }
+            else{
+                gradientData[i][j].strength = 1;
+            }
+                
+            count++;
+        }
+    }
+    image.updatePixels();
 }
+
+float x,y;
+float rotAngle;
+PImage img1, img2, img3;
 
 
 void setup() {
@@ -160,13 +230,16 @@ void setup() {
   rotAngle = 0;
   img1 = loadImage("engine.png");
   img2 = loadImage("engine.png");
-  applySobelFilter(img2, 0);
+  //img3 = loadImage("engine.png");
+  //applySobelFilter(img2, 0);
+  applyCannyOperator(img2);
 }
 
 void draw() {
   background(0);
   image(img1, x, y - (img1.height / 2));
   image(img2, x + img2.width + 200 , y - (img2.height / 2));
+  //image(img3, x  + (img3.width * 2) + 400 , y - (img3.height / 2));
 }
 
 
