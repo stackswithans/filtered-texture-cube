@@ -103,10 +103,10 @@ PixelData[][] applySobelFilter(PImage image, int blurLevel){
     {0, 0, 0},
     {-1, -2, -1}
   };
-  image.filter(GRAY);
   if(blurLevel > 0)
     image.filter(BLUR, blurLevel);
-    
+
+  image.filter(GRAY);
     
   PixelData[][] gradientData = new PixelData[image.height][image.width];
   color[][] pixels = getPixelMatrix(image);
@@ -128,7 +128,7 @@ PixelData[][] applySobelFilter(PImage image, int blurLevel){
   return gradientData;
 }
 
-void applyCannyOperator(PImage image, int blurLevel, float minThresh, float maxThresh){
+void applyCannyDetector(PImage image, int blurLevel, float minThresh, float maxThresh){
     
     PixelData[][] gradientData = applySobelFilter(image, blurLevel);
 
@@ -248,28 +248,35 @@ void setup() {
   x = width/2;
   y = 100;
   rotAngle = 0;
+
+  String filename = "lizard.jpg";
   //Foto original
-  img1 = loadImage("lizard.jpg");
+  img1 = loadImage(filename);
 
   //Foto com sobel (sem blur)
-  img2 = loadImage("lizard.jpg");
+  img2 = loadImage(filename);
   applySobelFilter(img2, 0);
+  img2.save("lizard_sobel.jpg");
 
-  //Foto com sobel (com blur 1)
-  img3 = loadImage("lizard.jpg");
+  //Foto com sobel (com blur 3x3)
+  img3 = loadImage(filename);
   applySobelFilter(img3, 1);
+  img3.save("lizard_sobel_blur.jpg");
 
   //Foto com o canny(0.1 -- 0.3)
-  img4 = loadImage("lizard.jpg");
-  applyCannyOperator(img4, 1, 0.1, 0.3);
+  img4 = loadImage(filename);
+  applyCannyDetector(img4, 1, 0.1, 0.3);
+  img4.save("lizard_canny_10_30.jpg");
 
   //Foto com o canny(0.2  -- 0.4)
-  img5 = loadImage("lizard.jpg");
-  applyCannyOperator(img5, 1, 0.2, 0.4);
+  img5 = loadImage(filename);
+  applyCannyDetector(img5, 1, 0.2, 0.4);
+  img5.save("lizard_canny_20_40.jpg");
 
   //Foto com o canny(0.3  -- 0.5)
-  img6 = loadImage("lizard.jpg");
-  applyCannyOperator(img6, 1, 0.3, 0.5);
+  img6 = loadImage(filename);
+  applyCannyDetector(img6, 1, 0.3, 0.5);
+  img6.save("lizard_canny_30_50.jpg");
   textureMode(NORMAL);
 }
 
