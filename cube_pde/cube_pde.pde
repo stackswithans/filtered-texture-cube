@@ -285,28 +285,28 @@ void setup() {
   applySobelFilter(img3, 1);
   img3.save("lizard_sobel_blur.jpg");
   println("Teste lizard_sobel:");
-  testFilterAccuracy(loadImage("./tests/lizard_sobel_cv.jpg"), img3);
+  testFilterAccuracy(loadImage("lizard_sobel_cv.jpg"), img3);
 
   //Foto com o canny(0.1 -- 0.3)
   img4 = loadImage(filename);
   applyCannyDetector(img4, 1, 0.1, 0.3);
   img4.save("lizard_canny_10_30.jpg");
   println("\nTeste lizard_canny_10_30:");
-  testFilterAccuracy(loadImage("./tests/lizard_canny_10.0_30.0_cv.jpg"), img4);
+  testFilterAccuracy(loadImage("lizard_canny_10.0_30.0_cv.jpg"), img4);
 
   //Foto com o canny(0.2  -- 0.4)
   img5 = loadImage(filename);
   applyCannyDetector(img5, 1, 0.2, 0.4);
   img5.save("lizard_canny_20_40.jpg");
   println("\nTeste lizard_canny_20_40:");
-  testFilterAccuracy(loadImage("./tests/lizard_canny_20.0_40.0_cv.jpg"), img5);
+  testFilterAccuracy(loadImage("lizard_canny_20.0_40.0_cv.jpg"), img5);
 
   //Foto com o canny(0.3  -- 0.5)
   img6 = loadImage(filename);
   applyCannyDetector(img6, 1, 0.3, 0.5);
   img6.save("lizard_canny_30_50.jpg");
   println("\nTeste lizard_canny_30_50:");
-  testFilterAccuracy(loadImage("./tests/lizard_canny_30.0_50.0_cv.jpg"), img6);
+  testFilterAccuracy(loadImage("lizard_canny_30.0_50.0_cv.jpg"), img6);
   textureMode(NORMAL);
 }
 
