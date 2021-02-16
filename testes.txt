@@ -1,0 +1,8 @@
+Teste lizard_sobel:
+Error médio absoluto por pixel: 44.99462
+Teste lizard_canny_10_30:
+Error médio absoluto por pixel: 36.65639
+Teste lizard_canny_20_40:
+Error médio absoluto por pixel: 35.26756
+Teste lizard_canny_30_50:
+Error médio absoluto por pixel: 33.77423
